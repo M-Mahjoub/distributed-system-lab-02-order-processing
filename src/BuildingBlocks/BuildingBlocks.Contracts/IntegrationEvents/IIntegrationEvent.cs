@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Infrastructure
+namespace BuildingBlocks.Contracts.IntegrationEvents
 {
     //چون Outbox به این سه مقدار احتیاج دارد.
     public interface IIntegrationEvent

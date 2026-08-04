@@ -1,4 +1,5 @@
-﻿using Order.Infrastructure.Persistence.Entities;
+﻿using BuildingBlocks.Contracts.IntegrationEvents;
+using Order.Infrastructure.Persistence.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Order.Infrastructure.Persistence.Outbox
 
             return new OutboxMessage(
                 Guid.CreateVersion7(),
-                integrationEvent.GetType().AssemblyQualifiedName!,
+                integrationEvent.GetType().Name!,
                 payload,
                 DateTime.UtcNow);
         }

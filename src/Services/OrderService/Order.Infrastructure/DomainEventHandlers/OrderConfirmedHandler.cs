@@ -2,7 +2,7 @@
 using Order.Domain.Orders.Events;
 using Order.Infrastructure.IntegrationEvents;
 
-namespace Order.Infrastructure.Handlers
+namespace Order.Infrastructure.DomainEventHandlers
 {
     public sealed class OrderConfirmedHandler
      : IDomainEventHandler<OrderConfirmedDomainEvent>

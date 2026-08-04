@@ -1,4 +1,5 @@
-﻿using Order.Infrastructure.Persistence.Entities;
+﻿using BuildingBlocks.Contracts.IntegrationEvents;
+using Order.Infrastructure.Persistence.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

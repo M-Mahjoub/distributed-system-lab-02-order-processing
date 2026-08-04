@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Order.Application;
 using Order.Domain.Abnstractions;
 using Order.Domain.Orders.Events;
-using Order.Infrastructure.Handlers;
+using Order.Infrastructure.BackgroundServices;
+using Order.Infrastructure.DomainEventHandlers;
+using Order.Infrastructure.IntegrationEvents;
 using Order.Infrastructure.Messaging.DomainEvents;
 using Order.Infrastructure.Messaging.IntegrationEvents;
 using Order.Infrastructure.Persistence;
@@ -35,7 +37,8 @@ namespace Order.Infrastructure
                                         IDomainEventHandler<OrderCreatedDomainEvent>,
                                         OrderCreatedHandler>();
             serviceDescriptors.AddScoped<IUnitOfWork, EfUnitOfWork>();
-            //serviceDescriptors.AddHostedService<OutboxProcessorBackgroundService>();
+            serviceDescriptors.AddHostedService<OutboxProcessorBackgroundService>();
+            serviceDescriptors.AddSingleton<IIntegrationEventTypeRegistry, IntegrationEventTypeRegistry>();
             serviceDescriptors.AddScoped<IIntegrationEventCollector, IntegrationEventCollector>();
 
             return serviceDescriptors;
