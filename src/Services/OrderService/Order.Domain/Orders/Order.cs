@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Domain;
+﻿using BuildingBlocks.Domain.Common;
+using BuildingBlocks.Domain.Errors;
 using Order.Domain.Orders.Events;
 using Order.Domain.Orders.Rules;
 

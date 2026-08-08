@@ -9,7 +9,7 @@ namespace Order.Infrastructure.IntegrationEvents
 
         public IntegrationEventTypeRegistry()
         {
-            _types = typeof(IIntegrationEvent)
+            _types = typeof(IntegrationEventTypeRegistry)
                 .Assembly
                 .GetTypes()
                 .Where(t => typeof(IIntegrationEvent).IsAssignableFrom(t)

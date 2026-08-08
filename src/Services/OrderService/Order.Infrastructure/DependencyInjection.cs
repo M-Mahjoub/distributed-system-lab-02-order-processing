@@ -1,9 +1,12 @@
 ﻿using BuildingBlocks.Application;
+using BuildingBlocks.Application.Abstractions.DomainEvents;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Infrastructure.Messaging.IntegrationEvents;
+using BuildingBlocks.Infrastructure.Persistence;
+using BuildingBlocks.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Order.Application;
 using Order.Domain.Abnstractions;
 using Order.Domain.Orders.Events;
 using Order.Infrastructure.BackgroundServices;
@@ -35,8 +38,8 @@ namespace Order.Infrastructure
             serviceDescriptors.AddScoped(typeof(DomainEventHandlerExecutor<>));
             serviceDescriptors.AddScoped<
                                         IDomainEventHandler<OrderCreatedDomainEvent>,
-                                        OrderCreatedHandler>();
-            serviceDescriptors.AddScoped<IUnitOfWork, EfUnitOfWork>();
+                                        OrderCreatedDomainEventHandler>();
+            serviceDescriptors.AddScoped<IUnitOfWork, Order.Infrastructure.Persistence.EfUnitOfWork>();
             serviceDescriptors.AddHostedService<OutboxProcessorBackgroundService>();
             serviceDescriptors.AddSingleton<IIntegrationEventTypeRegistry, IntegrationEventTypeRegistry>();
             serviceDescriptors.AddScoped<IIntegrationEventCollector, IntegrationEventCollector>();

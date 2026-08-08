@@ -4,7 +4,11 @@ using BuildingBlocks.Contracts.IntegrationEvents;
 
 namespace Order.Infrastructure.IntegrationEvents
 {
-    public sealed record OrderConfirmedIntegrationEvent (OrderId OrderId, CustomerId CustomerId) : IntegrationEvent
+    public sealed record OrderConfirmedIntegrationEvent(
+         Guid EventId,
+         DateTime OccurredOnUtc,
+         OrderId OrderId,
+         CustomerId CustomerId) : IntegrationEvent(EventId, OccurredOnUtc)
     {
     }
 }

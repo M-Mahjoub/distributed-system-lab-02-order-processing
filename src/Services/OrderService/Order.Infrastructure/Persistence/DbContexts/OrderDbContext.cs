@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Order.Infrastructure.Persistence.Entities;
+﻿using BuildingBlocks.Infrastructure.Persistence;
+using BuildingBlocks.Infrastructure.Persistence.Outbox;
+using Microsoft.EntityFrameworkCore;
 
 namespace Order.Infrastructure.Persistence.DbContexts
 {
-    public class OrderDbContext : DbContext/*, ApplicationDbContext*/
+    public class OrderDbContext :  ApplicationDbContext
     {
         public OrderDbContext(DbContextOptions<OrderDbContext> orderDbContext) : base(orderDbContext)
         {

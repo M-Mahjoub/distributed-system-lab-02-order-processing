@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Domain;
+using BuildingBlocks.Infrastructure.Persistence;
 using Order.Domain.Orders.Events;
 using Order.Infrastructure.IntegrationEvents;
 
@@ -21,6 +22,8 @@ namespace Order.Infrastructure.DomainEventHandlers
         {
             var integrationEvent =
                 new OrderConfirmedIntegrationEvent(
+                    Guid.NewGuid(),    
+                    domainEvent.OccuredOn,
                     domainEvent.OrderId,
                     domainEvent.CustomerId);
 

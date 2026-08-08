@@ -1,15 +1,15 @@
 ﻿using BuildingBlocks.Application;
-using BuildingBlocks.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Order.Application;
 using Order.Infrastructure.Persistence.DbContexts;
-using Order.Infrastructure.Persistence.Extensions;
-using Order.Infrastructure.Persistence.Outbox;
+using BuildingBlocks.Infrastructure.Persistence.Extensions;
+using BuildingBlocks.Infrastructure.Persistence;
+using BuildingBlocks.Application.Abstractions.DomainEvents;
+using BuildingBlocks.Infrastructure.Persistence.Outbox;
+using BuildingBlocks.Domain.Errors;
 
 namespace Order.Infrastructure.Persistence
 {
-    public class EfUnitOfWork : IUnitOfWork
+    public class EfUnitOfWork : BuildingBlocks.Infrastructure.Persistence.EfUnitOfWork// IUnitOfWork
     {
         //private IDbContextTransaction _transaction;
 
@@ -21,7 +21,10 @@ namespace Order.Infrastructure.Persistence
         public EfUnitOfWork(IDomainEventDispatcher domainEventDispatcher,
                           IIntegrationEventCollector integrationEventCollector,
                           IOutboxMessageFactory outboxMessageFactory,
-                          OrderDbContext dbContext)
+                          OrderDbContext dbContext):base(dbContext,
+                                                         domainEventDispatcher,
+                                                         integrationEventCollector,
+                                                         outboxMessageFactory) 
         {
             _integrationEventCollector = integrationEventCollector;
             _domainEventDispatcher = domainEventDispatcher;

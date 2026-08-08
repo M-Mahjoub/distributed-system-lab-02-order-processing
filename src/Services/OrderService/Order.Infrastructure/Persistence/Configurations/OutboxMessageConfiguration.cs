@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BuildingBlocks.Infrastructure.Persistence.Outbox;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Order.Infrastructure.Persistence.Entities;
 
 namespace Order.Infrastructure.Persistence.Configurations
 {

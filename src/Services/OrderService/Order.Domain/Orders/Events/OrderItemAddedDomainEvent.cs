@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Domain;
+﻿using BuildingBlocks.Domain.Events;
 using Order.Domain.Orders;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Order.Domain.Orders.Events
 {
-    public sealed class OrderItemAddedDomainEvent(ProductSnapshot Product, int quantity) : DomainEvent
+    public sealed record OrderItemAddedDomainEvent(ProductSnapshot Product, int quantity) : DomainEvent
     {
     }
 }

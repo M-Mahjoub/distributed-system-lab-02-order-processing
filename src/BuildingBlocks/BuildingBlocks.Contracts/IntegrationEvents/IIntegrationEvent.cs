@@ -9,7 +9,7 @@ namespace BuildingBlocks.Contracts.IntegrationEvents
     //چون Outbox به این سه مقدار احتیاج دارد.
     public interface IIntegrationEvent
     {
-        Guid Id { get; }
+        Guid EventId { get; }
 
         DateTime OccurredOnUtc { get; }
 
