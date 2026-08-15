@@ -1,0 +1,88 @@
+﻿using ShoppingAgent.Domain;
+
+namespace ShoppingAgent.Application.AI
+{
+    public sealed class Conversation
+    {
+        private readonly List<ChatMessageDto> _messages = [];
+
+        public string Id { get; }
+
+        public IReadOnlyCollection<ChatMessageDto> Messages =>
+            _messages.AsReadOnly();
+
+        public Conversation(string id)
+        {
+            Id = id;
+        }
+
+        public Conversation(
+            string id,
+            IEnumerable<ChatMessageDto> messages)
+        {
+            Id = id;
+            _messages.AddRange(messages);
+        }
+
+        public void AddSystemMessage(string text)
+        {
+            _messages.Add(
+                new ChatMessageDto(
+                    MessageRole.System,
+                    new List<ChatContent> {
+                        new TextChatContent(text)
+                        }
+                    ));
+        }
+
+        public void AddUserMessage(string text)
+        {
+            _messages.Add(
+                new ChatMessageDto(
+                    MessageRole.User,
+                    new List<ChatContent> {
+                        new TextChatContent(text)
+                        }));
+        }
+
+        public void AddAssistantMessage(string text)
+        {
+            _messages.Add(
+                new ChatMessageDto(
+                    MessageRole.Assistant,
+                    new List<ChatContent> {
+                        new TextChatContent(text)
+                        }));
+        }
+
+        public void AddToolCall(
+            string callId,
+            string name,
+            IReadOnlyDictionary<string, object?> arguments)
+        {
+            _messages.Add(
+                new ChatMessageDto(
+                    MessageRole.Assistant,
+                    new List<ChatContent> {
+                        new ToolCallChatContent(
+                        callId,
+                        name,
+                        arguments)
+                    }));
+        }
+
+        public void AddToolResult(
+            string callId,
+            object? result)
+        {
+            _messages.Add(
+                new ChatMessageDto(
+                    MessageRole.Tool,
+                   new List<ChatContent> {
+                        new ToolResultChatContent(
+                        callId,
+                        result)
+                   }));
+        }
+    }
+}
