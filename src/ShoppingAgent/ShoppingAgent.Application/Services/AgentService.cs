@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 
 namespace ShoppingAgent.Application.Services
 {
+    //مسئول چرخه‌ی LLM ↔ Tool باشد.
     public sealed class AgentService
     {
         private readonly IChatModel _chatModel;
+        private readonly IContextManager _contextManager;
         private readonly IReadOnlyList<IAgentTool> _tools;
 
         public AgentService(
             IChatModel chatModel,
+            IContextManager contextManager,
             IEnumerable<IAgentTool> tools)
         {
             _chatModel = chatModel;
             _tools = tools.ToList();
+            _contextManager = contextManager;
         }
 
         public async Task<string> RunAsync(
@@ -30,9 +34,13 @@ namespace ShoppingAgent.Application.Services
 
             while (true)
             {
+                var context =
+                   _contextManager.BuildContext(
+                       conversation);
+
                 var response =
                     await _chatModel.GenerateAsync(
-                        conversation.Messages,
+                        context,
                         _tools,
                         cancellationToken);
 

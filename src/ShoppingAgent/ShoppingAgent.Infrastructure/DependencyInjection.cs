@@ -49,8 +49,12 @@ namespace ShoppingAgent.Infrastructure
             services.AddSingleton<IConversationRepository, RedisConversationRepository>();
             services.AddScoped<IChatModel, OllamaChatModel>();
             services.AddScoped<ChatService>();
-            services.AddScoped<AgentService>();
+            services.AddScoped<AgentService>(); 
+            services.AddScoped<IConversationSummarizer, ConversationSummarizer>();
             services.AddScoped<IAgentTool, GetCurrentTimeTool>();
+            services.AddScoped<
+                     IContextManager,
+                     ContextManager>();
 
             return services;
         }

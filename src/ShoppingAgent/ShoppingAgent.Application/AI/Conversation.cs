@@ -8,6 +8,8 @@ namespace ShoppingAgent.Application.AI
 
         public string Id { get; }
 
+        public string? Summary { get; private set; }
+
         public IReadOnlyCollection<ChatMessageDto> Messages =>
             _messages.AsReadOnly();
 
@@ -18,10 +20,17 @@ namespace ShoppingAgent.Application.AI
 
         public Conversation(
             string id,
-            IEnumerable<ChatMessageDto> messages)
+            IEnumerable<ChatMessageDto> messages,
+             string? summary = null)
         {
             Id = id;
             _messages.AddRange(messages);
+            Summary = summary;
+        }
+
+        public void SetSummary(string summary)
+        {
+            Summary = summary;
         }
 
         public void AddSystemMessage(string text)
