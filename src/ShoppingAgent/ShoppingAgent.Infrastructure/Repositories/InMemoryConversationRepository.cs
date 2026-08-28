@@ -42,5 +42,15 @@ namespace ShoppingAgent.Infrastructure.Repositories
 
             return Task.CompletedTask;
         }
+
+        public Task<bool> AppendMessageAsync(string conversationId, ChatMessageDto message, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateSummaryAsync(string conversationId, string summary, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

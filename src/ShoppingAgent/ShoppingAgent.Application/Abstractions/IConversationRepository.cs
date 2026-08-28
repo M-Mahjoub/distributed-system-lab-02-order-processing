@@ -12,8 +12,14 @@ namespace ShoppingAgent.Application.Abstractions
             Conversation conversation,
             CancellationToken cancellationToken = default);
 
-        Task ReplaceAsync(
-            Conversation conversation,
+        Task<bool> AppendMessageAsync(
+            string conversationId,
+            ChatMessageDto message,
+            CancellationToken cancellationToken = default);
+
+        Task UpdateSummaryAsync(
+            string conversationId,
+            string summary,
             CancellationToken cancellationToken = default);
     }
 }

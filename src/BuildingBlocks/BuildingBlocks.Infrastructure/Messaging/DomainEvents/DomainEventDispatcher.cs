@@ -2,8 +2,9 @@
 using BuildingBlocks.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Order.Infrastructure;
 
-namespace Order.Infrastructure.Messaging.DomainEvents
+namespace BuildingBlocks.Infrastructure.Messaging.DomainEvents
 {
     public class DomainEventDispatcher : IDomainEventDispatcher
     {

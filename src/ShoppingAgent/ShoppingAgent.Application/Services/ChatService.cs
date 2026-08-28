@@ -43,6 +43,7 @@ namespace ShoppingAgent.Application.Services
 
         public async Task<string> ChatAsync(
             string conversationId,
+            Guid messageId,
             string message,
             CancellationToken cancellationToken = default)
         {
@@ -58,9 +59,19 @@ namespace ShoppingAgent.Application.Services
 
                 conversation.AddSystemMessage(
                     "You are a helpful shopping assistant.");
+
+
+                await _repository.CreateAsync(
+                    conversation,
+                    cancellationToken);
             }
 
-            conversation.AddUserMessage(message);
+            conversation.AddUserMessage(messageId,message);
+
+            await _repository.AppendMessageAsync(
+                              conversationId,
+                              conversation.Messages.Last(),
+                              cancellationToken);
 
             var context =
                 _contextManager.BuildContext(
@@ -73,6 +84,11 @@ namespace ShoppingAgent.Application.Services
                   cancellationToken: cancellationToken);
 
             conversation.AddAssistantMessage(response.Text);
+
+            await _repository.AppendMessageAsync(
+                              conversationId,
+                              conversation.Messages.Last(),
+                              cancellationToken);
 
             if (conversation.Messages.Count >=
                 SummaryThreshold)
@@ -90,10 +106,6 @@ namespace ShoppingAgent.Application.Services
 
                 conversation.SetSummary(summary);
             }
-
-            await _repository.ReplaceAsync(
-                conversation,
-                cancellationToken);
 
             return response.Text;
         }

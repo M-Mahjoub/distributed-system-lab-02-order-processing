@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Application;
 using BuildingBlocks.Application.Abstractions.DomainEvents;
 using BuildingBlocks.Domain;
+using BuildingBlocks.Infrastructure.Messaging.DomainEvents;
 using BuildingBlocks.Infrastructure.Messaging.IntegrationEvents;
 using BuildingBlocks.Infrastructure.Persistence;
 using BuildingBlocks.Infrastructure.Persistence.Outbox;
@@ -12,7 +13,6 @@ using Order.Domain.Orders.Events;
 using Order.Infrastructure.BackgroundServices;
 using Order.Infrastructure.DomainEventHandlers;
 using Order.Infrastructure.IntegrationEvents;
-using Order.Infrastructure.Messaging.DomainEvents;
 using Order.Infrastructure.Messaging.IntegrationEvents;
 using Order.Infrastructure.Persistence;
 using Order.Infrastructure.Persistence.DbContexts;
@@ -30,7 +30,7 @@ namespace Order.Infrastructure
             serviceDescriptors.AddDbContext<OrderDbContext>(cfg =>
                                cfg.UseNpgsql(configurationManager.GetConnectionString("OrderDb")));
 
-            serviceDescriptors.AddScoped<IOederRepository, OrderRepository>();
+            serviceDescriptors.AddScoped<IOrderRepository, OrderRepository>();
             serviceDescriptors.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             serviceDescriptors.AddSingleton(_ => new JsonSerializerOptions());
             serviceDescriptors.AddScoped<IOutboxMessageFactory, SystemTextJsonOutboxMessageFactory>();

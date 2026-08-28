@@ -1,48 +1,55 @@
 ﻿using BuildingBlocks.Application;
 using BuildingBlocks.Domain.Errors;
+using Inventory.Application.Abstractions.Persistence;
 using Inventory.Domain;
 using Inventory.Domain.Abnstractions;
 using MediatR;
 
 namespace Inventory.Application.Features.Inventory.Reserve
 {
-    public class ReserveInventoryCommandHandler : IRequestHandler<ReserveInventoryCommand, Result>
+    public sealed class ReserveInventoryCommandHandler
+    : IRequestHandler<ReserveInventoryCommand, Result>
     {
-        public IUnitOfWork _unitOfWork { get; set; }
-        public IInventoryRepository _inventoryRepository { get; set; }
+        private readonly IProductInventoryRepository _repository;
 
-        public ReserveInventoryCommandHandler(IUnitOfWork unitOfWork, IInventoryRepository inventoryRepository)
+        public ReserveInventoryCommandHandler(
+            IProductInventoryRepository repository)
         {
-            _inventoryRepository = inventoryRepository;
-            _unitOfWork = unitOfWork;
+            _repository = repository;
         }
 
-        public async Task<Result> Handle(ReserveInventoryCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(
+            ReserveInventoryCommand command,
+            CancellationToken cancellationToken)
         {
-            var pIds = command.Items
-                .Select(c => ProductId.From(c.ProductId).Value)
-                .ToList();
+            var productIds = command.Items
+                .Select(x => x.ProductId)
+                .Distinct()
+                .ToArray();
 
-            var inventories = await _inventoryRepository.GetByProductIdsAsync(pIds, cancellationToken);
-            foreach (var item in command.Items)
+            var inventories =
+                await _repository.GetByProductIdsAsync(
+                    productIds,
+                    cancellationToken);
+
+            if (inventories.Count != productIds.Length)
             {
-                var productId =
-                 ProductId.From(item.ProductId).Value;
-
-                if (!inventories.ContainsKey(productId))
-                {
-                    return Result.Failure(
-                        InventoryErrors.ProductNotFound(productId));
-                }
-
-                var inventory =
-                    inventories[productId];
-
-                inventory.Reserve(item.Quantity);
-
+                return Result.Failure(
+                    InventoryErrors.ProductNotFound(null));
             }
 
-            await _unitOfWork.CommitAsync(cancellationToken);
+            foreach (var item in command.Items)
+            {
+                var inventory = inventories.First(
+                    x => x.ProductId == item.ProductId);
+
+                var result = inventory.Reserve(
+                    command.OrderId,
+                    item.Quantity);
+
+                if (!result.IsSuccess)
+                    return result;
+            }
 
             return Result.Success();
         }

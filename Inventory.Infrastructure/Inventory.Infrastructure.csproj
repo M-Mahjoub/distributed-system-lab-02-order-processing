@@ -15,14 +15,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Inventory.Application\Inventory.Application.csproj" />
     <ProjectReference Include="..\Inventory.Domain\Inventory.Domain.csproj" />
     <ProjectReference Include="..\src\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\src\BuildingBlocks\BuildingBlocks.Infrastructure\BuildingBlocks.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DomainEventHandlers\" />
     <Folder Include="Messaging\Registrations\" />
     <Folder Include="Messaging\Serialization\" />
     <Folder Include="Messaging\Publishers\" />
+    <Folder Include="Persistence\Outbox\" />
   </ItemGroup>
 
 </Project>

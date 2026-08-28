@@ -8,6 +8,6 @@ namespace BuildingBlocks.Domain.Events
 {
     public record DomainEvent : IDomainEvent
     {
-        public DateTime OccuredOn => throw new NotImplementedException();
+        public DateTime OccurredOnUtc => throw new NotImplementedException();
     }
 }

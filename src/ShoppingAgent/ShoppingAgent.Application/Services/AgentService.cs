@@ -27,10 +27,11 @@ namespace ShoppingAgent.Application.Services
 
         public async Task<string> RunAsync(
     Conversation conversation,
+     Guid messageId,
     string userMessage,
     CancellationToken cancellationToken = default)
         {
-            conversation.AddUserMessage(userMessage);
+            conversation.AddUserMessage(messageId, userMessage);
 
             while (true)
             {

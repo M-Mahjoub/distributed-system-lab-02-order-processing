@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="dtos\" />
     <Folder Include="IntegrationEvents\" />
     <Folder Include="Commands\" />
     <Folder Include="APIContracts\" />

@@ -37,6 +37,7 @@ namespace ShoppingAgent.Application.AI
         {
             _messages.Add(
                 new ChatMessageDto(
+                    Guid.NewGuid(),
                     MessageRole.System,
                     new List<ChatContent> {
                         new TextChatContent(text)
@@ -44,10 +45,11 @@ namespace ShoppingAgent.Application.AI
                     ));
         }
 
-        public void AddUserMessage(string text)
+        public void AddUserMessage(Guid messageId, string text)
         {
             _messages.Add(
                 new ChatMessageDto(
+                    messageId,
                     MessageRole.User,
                     new List<ChatContent> {
                         new TextChatContent(text)
@@ -58,6 +60,7 @@ namespace ShoppingAgent.Application.AI
         {
             _messages.Add(
                 new ChatMessageDto(
+                    Guid.NewGuid(),
                     MessageRole.Assistant,
                     new List<ChatContent> {
                         new TextChatContent(text)
@@ -71,6 +74,7 @@ namespace ShoppingAgent.Application.AI
         {
             _messages.Add(
                 new ChatMessageDto(
+                    Guid.NewGuid(),
                     MessageRole.Assistant,
                     new List<ChatContent> {
                         new ToolCallChatContent(
@@ -86,6 +90,7 @@ namespace ShoppingAgent.Application.AI
         {
             _messages.Add(
                 new ChatMessageDto(
+                    Guid.NewGuid(),
                     MessageRole.Tool,
                    new List<ChatContent> {
                         new ToolResultChatContent(

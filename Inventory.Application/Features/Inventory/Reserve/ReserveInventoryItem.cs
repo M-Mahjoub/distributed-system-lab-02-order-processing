@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Contracts.dtos
+namespace Inventory.Application.Features.Inventory.Reserve
 {
-    public sealed record OrderItemDto(
+    public sealed record ReserveInventoryItem(
     Guid ProductId,
     int Quantity);
 }

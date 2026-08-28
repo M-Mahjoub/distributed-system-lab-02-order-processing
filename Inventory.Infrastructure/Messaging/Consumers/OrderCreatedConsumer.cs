@@ -1,31 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.Contracts.IntegrationEvents.Orders;
+using Inventory.Application.Features.Inventory.Reserve;
+using MediatR;
 
 namespace Inventory.Infrastructure.Messaging.Consumers
 {
     public class OrderCreatedConsumer
     {
-        //private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        //public OrderCreatedConsumer(IMediator mediator)
-        //{
-        //    _mediator = mediator;
-        //}
+        public OrderCreatedConsumer(ISender sender)
+        {
+            _sender = sender;
+        }
 
-        //public async Task Consume(
-        //    OrderCreatedIntegrationEvent message,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command =
-        //        new ReserveInventoryCommand(
-        //            message.EventId,
-        //            message.OrderId,
-        //            message.Items);
+        public async Task ConsumeAsync(
+            OrderCreatedIntegrationEvent message,
+            CancellationToken cancellationToken)
+        {
+            var items = message.Items
+                               .Select(x =>
+                                   new ReserveInventoryItem(
+                                       x.ProductId,
+                                       x.Quantity))
+                               .ToList();
 
-        //    await _mediator.Send(command, cancellationToken);
-        //}
+
+            var command = new ReserveInventoryCommand(
+                message.OrderId,
+                items);
+
+            await _sender.Send(
+                command,
+                cancellationToken);
+        }
     }
 }

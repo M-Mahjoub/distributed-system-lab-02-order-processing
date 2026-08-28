@@ -1,15 +1,11 @@
 ﻿using ShoppingAgent.Application.AI;
+using System.Text.Json;
+using ShoppingAgent.Application.Abstractions;
+using StackExchange.Redis;
 
 namespace ShoppingAgent.Infrastructure.Repositories
 {
-    using System.Text.Json;
-    using ShoppingAgent.Application.Abstractions;
-    using ShoppingAgent.Application.AI;
-    using StackExchange.Redis;
-
-    using System.Text.Json;
-    using StackExchange.Redis;
-
+    //ذخیره و بازیابی
     public sealed class RedisConversationRepository
         : IConversationRepository
     {
@@ -17,7 +13,7 @@ namespace ShoppingAgent.Infrastructure.Repositories
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            WriteIndented = false
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         public RedisConversationRepository(
@@ -30,65 +26,165 @@ namespace ShoppingAgent.Infrastructure.Repositories
             string id,
             CancellationToken cancellationToken = default)
         {
-            var key = GetKey(id);
+            var metadataKey = GetMetadataKey(id);
+            var messagesKey = GetMessagesKey(id);
 
-            var value =
-                await _database.StringGetAsync(key);
+            var metadataValue =
+                await _database.StringGetAsync(metadataKey);
 
-            if (value.IsNullOrEmpty)
+            if (metadataValue.IsNullOrEmpty)
             {
                 return null;
             }
 
-            var messages =
-                JsonSerializer.Deserialize<List<ChatMessageDto>>(
-                    value.ToString(),
+            var metadata =
+                JsonSerializer.Deserialize<ConversationMetadata>(
+                    metadataValue!,
                     JsonOptions);
 
-            if (messages is null)
+            if (metadata is null)
             {
                 return null;
+            }
+
+            var values =
+                await _database.ListRangeAsync(messagesKey);
+
+            var messages = new List<ChatMessageDto>();
+
+            foreach (var value in values)
+            {
+                var message =
+                    JsonSerializer.Deserialize<ChatMessageDto>(
+                        value!,
+                        JsonOptions);
+
+                if (message is not null)
+                {
+                    messages.Add(message);
+                }
             }
 
             return new Conversation(
                 id,
-                messages);
+                messages,
+                metadata.Summary);
         }
 
         public async Task CreateAsync(
             Conversation conversation,
             CancellationToken cancellationToken = default)
         {
-            var key = GetKey(conversation.Id);
+            var metadataKey =
+                GetMetadataKey(conversation.Id);
 
-            var json =
+            var messagesKey =
+                GetMessagesKey(conversation.Id);
+
+            var metadata = new ConversationMetadata
+            {
+                Summary = conversation.Summary,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
+            };
+
+            var metadataJson =
                 JsonSerializer.Serialize(
-                    conversation.Messages,
+                    metadata,
                     JsonOptions);
 
-            var created =
-                await _database.StringSetAsync(
-                    key,
-                    json,
-                    TimeSpan.FromDays(30),
-                    When.NotExists);
+            await _database.StringSetAsync(
+                metadataKey,
+                metadataJson,
+                TimeSpan.FromDays(30),
+                When.NotExists);
 
-            if (!created)
+            foreach (var message in conversation.Messages)
             {
-                throw new InvalidOperationException(
-                    $"Conversation '{conversation.Id}' already exists.");
+                var messageJson =
+                    JsonSerializer.Serialize(
+                        message,
+                        JsonOptions);
+
+                await _database.ListRightPushAsync(
+                    messagesKey,
+                    messageJson);
             }
+
+            await _database.KeyExpireAsync(
+                messagesKey,
+                TimeSpan.FromDays(30));
         }
 
-        public async Task ReplaceAsync(
-            Conversation conversation,
-            CancellationToken cancellationToken = default)
+        public async Task<bool> AppendMessageAsync(
+    string conversationId,
+    ChatMessageDto message,
+    CancellationToken cancellationToken = default)
         {
-            var key = GetKey(conversation.Id);
+            var messagesKey =
+                GetMessagesKey(conversationId);
+
+            var messageIdsKey =
+                GetMessageIdsKey(conversationId);
+
+            var added =
+                await _database.SetAddAsync(
+                    messageIdsKey,
+                    message.Id.ToString());
+
+            if (!added)
+            {
+                // قبلاً ذخیره شده
+                return false;
+            }
 
             var json =
                 JsonSerializer.Serialize(
-                    conversation.Messages,
+                    message,
+                    JsonOptions);
+
+            await _database.ListRightPushAsync(
+                messagesKey,
+                json);
+
+            await UpdateUpdatedAtAsync(
+                conversationId);
+
+            return true;
+        }
+
+        public async Task UpdateSummaryAsync(
+            string conversationId,
+            string summary,
+            CancellationToken cancellationToken = default)
+        {
+            var key =
+                GetMetadataKey(conversationId);
+
+            var value =
+                await _database.StringGetAsync(key);
+
+            if (value.IsNullOrEmpty)
+            {
+                return;
+            }
+
+            var metadata =
+                JsonSerializer.Deserialize<ConversationMetadata>(
+                    value!,
+                    JsonOptions);
+
+            if (metadata is null)
+            {
+                return;
+            }
+
+            metadata.Summary = summary;
+            metadata.UpdatedAt = DateTimeOffset.UtcNow;
+
+            var json =
+                JsonSerializer.Serialize(
+                    metadata,
                     JsonOptions);
 
             await _database.StringSetAsync(
@@ -97,9 +193,57 @@ namespace ShoppingAgent.Infrastructure.Repositories
                 TimeSpan.FromDays(30));
         }
 
-        private static RedisKey GetKey(string id)
+        private async Task UpdateUpdatedAtAsync(
+            string conversationId)
         {
-            return $"conversation:{id}";
+            var key =
+                GetMetadataKey(conversationId);
+
+            var value =
+                await _database.StringGetAsync(key);
+
+            if (value.IsNullOrEmpty)
+            {
+                return;
+            }
+
+            var metadata =
+                JsonSerializer.Deserialize<ConversationMetadata>(
+                    value!,
+                    JsonOptions);
+
+            if (metadata is null)
+            {
+                return;
+            }
+
+            metadata.UpdatedAt =
+                DateTimeOffset.UtcNow;
+
+            var json =
+                JsonSerializer.Serialize(
+                    metadata,
+                    JsonOptions);
+
+            await _database.StringSetAsync(
+                key,
+                json,
+                TimeSpan.FromDays(30));
+        }
+
+        private static RedisKey GetMessagesKey(string id)
+        {
+            return $"conversation:{id}:messages";
+        }
+
+        private static RedisKey GetMetadataKey(string id)
+        {
+            return $"conversation:{id}:metadata";
+        }
+
+        private static RedisKey GetMessageIdsKey(string id)
+        {
+            return $"conversation:{id}:message-ids";
         }
     }
 }

@@ -16,6 +16,10 @@ namespace Order.Domain
          "order.invalid.productId",
          ErrorType.Validation);
 
+        public static readonly Error InvalidStatus = new Error(
+        "order.invalinvalidstatus.status",
+        ErrorType.Validation);
+
         public static readonly Error OrderItemQuantityLessThanZero = new Error(
          "orderItem.invalid.quantity",
          ErrorType.Validation);

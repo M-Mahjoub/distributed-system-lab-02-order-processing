@@ -4,6 +4,7 @@ using ShoppingAgent.Domain;
 
 namespace ShoppingAgent.Infrastructure.AI
 {
+    //خلاصه کردن
     public sealed class ConversationSummarizer
      : IConversationSummarizer
     {
@@ -40,6 +41,7 @@ namespace ShoppingAgent.Infrastructure.AI
                 new List<ChatMessageDto>
                 {
                 new(
+                    Guid.NewGuid(),
                     MessageRole.System,
                      new List<ChatContent> {
                         new TextChatContent(prompt)

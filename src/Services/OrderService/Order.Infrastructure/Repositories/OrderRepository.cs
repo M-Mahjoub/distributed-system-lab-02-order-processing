@@ -2,15 +2,10 @@
 using Order.Domain.Abnstractions;
 using Order.Domain.Orders;
 using Order.Infrastructure.Persistence.DbContexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Order.Infrastructure.Repositories
 {
-    public class OrderRepository : IOederRepository
+    public class OrderRepository : IOrderRepository
     {
         private OrderDbContext _context { get; set; }
 

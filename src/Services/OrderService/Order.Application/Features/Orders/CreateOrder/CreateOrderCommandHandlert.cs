@@ -8,11 +8,11 @@ namespace Order.Application.Features.Orders.CreateOrder
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderId>
     {
-        public IOederRepository _orderRepository { get; set; }
+        public IOrderRepository _orderRepository { get; set; }
 
         public IUnitOfWork _unitOfWork { get; set; }
 
-        public CreateOrderCommandHandler(IOederRepository orderRepository, IUnitOfWork unitOfWork)
+        public CreateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;

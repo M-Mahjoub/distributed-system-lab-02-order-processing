@@ -50,6 +50,7 @@ app.MapPost(
         var response =
             await chatService.ChatAsync(
                 request.ConversationId,
+                Guid.NewGuid(),
                 request.Message,
                 cancellationToken);
 

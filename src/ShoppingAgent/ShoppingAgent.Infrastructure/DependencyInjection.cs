@@ -24,7 +24,7 @@ namespace ShoppingAgent.Infrastructure
             var ollama = new OllamaApiClient(
            new Uri("http://localhost:11434"),
            "qwen3:1.7b");
-
+             
             IChatClient chatClient = ollama;
 
             services.AddSingleton(chatClient);
@@ -52,6 +52,9 @@ namespace ShoppingAgent.Infrastructure
             services.AddScoped<AgentService>(); 
             services.AddScoped<IConversationSummarizer, ConversationSummarizer>();
             services.AddScoped<IAgentTool, GetCurrentTimeTool>();
+            services.AddScoped<
+                     ITokenCounter,
+                     SimpleTokenCounter>();
             services.AddScoped<
                      IContextManager,
                      ContextManager>();

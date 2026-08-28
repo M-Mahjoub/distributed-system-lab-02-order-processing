@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace ShoppingAgent.Application.AI
 {
     public sealed record ChatMessageDto(
+         Guid Id,
      MessageRole Role,
      IReadOnlyList<ChatContent> Contents);
 

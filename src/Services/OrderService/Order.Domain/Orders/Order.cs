@@ -69,19 +69,36 @@ namespace Order.Domain.Orders
             return Result.Success();
         }
 
-        //public Result Confirm()
-        //{
-        //    var result = EnsureCanConfirm();
+        public Result Confirm()
+        {
+            //var result = EnsureCanConfirm();
 
-        //    if (result.IsFailure)
-        //        return result;
+            if (Status != OrderStatus.PendingPayment)
+            {
+                return Result.Failure(
+                    OrderErrors.InvalidStatus);
+            }
 
-        //    Status = OrderStatus.Confirmed;
+            Status = OrderStatus.Confirmed;
 
-        //    Raise(new OrderConfirmedDomainEvent(Id));
+            //Raise(new OrderConfirmedDomainEvent(Id));
 
-        //    return Result.Success();
-        //}
+            return Result.Success();
+        }
+
+        public Result Cancel()
+        {
+            if (Status != OrderStatus.PendingPayment)
+            {
+                return Result.Failure(
+                    OrderErrors.InvalidStatus);
+            }
+
+            Status = OrderStatus.Cancelled;
+
+            return Result.Success();
+        }
+
 
         //private Result EnsureCanConfirm()
         //{

@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Orders\CancelOrder\" />
     <Folder Include="Queries_ReadModel\" />
   </ItemGroup>
 

@@ -1,11 +1,8 @@
 ﻿using BuildingBlocks.Application;
 using BuildingBlocks.Application.Abstractions.DomainEvents;
 using BuildingBlocks.Domain.Errors;
-using BuildingBlocks.Infrastructure.Messaging.IntegrationEvents;
 using BuildingBlocks.Infrastructure.Persistence.Extensions;
 using BuildingBlocks.Infrastructure.Persistence.Outbox;
-using Order.Infrastructure.Messaging.DomainEvents;
-using System.Text.Json;
 
 namespace BuildingBlocks.Infrastructure.Persistence
 {

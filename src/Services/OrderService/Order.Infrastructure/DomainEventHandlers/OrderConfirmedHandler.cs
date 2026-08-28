@@ -16,14 +16,14 @@ namespace Order.Infrastructure.DomainEventHandlers
             _collector = collector;
         }
 
-        public async Task Handle(
+        public async Task HandleAsync(
             OrderConfirmedDomainEvent domainEvent,
             CancellationToken cancellationToken)
         {
             var integrationEvent =
                 new OrderConfirmedIntegrationEvent(
                     Guid.NewGuid(),    
-                    domainEvent.OccuredOn,
+                    domainEvent.OccurredOnUtc,
                     domainEvent.OrderId,
                     domainEvent.CustomerId);
 
