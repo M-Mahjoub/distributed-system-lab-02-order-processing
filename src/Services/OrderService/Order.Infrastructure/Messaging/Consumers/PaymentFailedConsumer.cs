@@ -1,33 +1,35 @@
 ﻿using BuildingBlocks.Contracts.IntegrationEvents.Payments;
-using MediatR;
-using Order.Application.Features.Orders.CancelOrder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Order.Application.Sagas;
 
 namespace Order.Infrastructure.Messaging.Consumers
 {
     public sealed class PaymentFailedConsumer
     {
-        private readonly ISender _sender;
+        //private readonly ISender _sender;
 
-        public PaymentFailedConsumer(ISender sender)
+        private readonly OrderSagaCoordinator _coordinator;
+
+        public PaymentFailedConsumer(
+            OrderSagaCoordinator coordinator)
         {
-            _sender = sender;
+            _coordinator = coordinator;
         }
 
         public async Task ConsumeAsync(
             PaymentFailedIntegrationEvent message,
             CancellationToken cancellationToken)
         {
-            var command = new CancelOrderCommand(
-                message.OrderId);
-
-            await _sender.Send(
-                command,
+            await _coordinator.HandlePaymentFailedAsync(
+                message.OrderId,
+                message.Reason,
                 cancellationToken);
+
+            //var command = new CancelOrderCommand(
+            //   message.OrderId);
+
+            //await _sender.Send(
+            //    command,
+            //    cancellationToken);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Infrastructure.Messaging.RabbitMQ;
+﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Infrastructure.Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

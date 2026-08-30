@@ -8,6 +8,7 @@ namespace BuildingBlocks.Contracts.IntegrationEvents.Payments
 {
     public sealed record PaymentFailedIntegrationEvent(
     Guid EventId,
-    DateTime OccurredOnUtc,
-    Guid OrderId);
+    Guid OrderId,
+    string Reason,
+    DateTime OccurredOnUtc);
 }

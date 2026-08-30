@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Application;
+﻿using BuildingBlocks.Application.Abstractions.Persistence;
 using BuildingBlocks.Domain.Errors;
 using Inventory.Infrastructure.Persistence.DbContexts;
 using Microsoft.EntityFrameworkCore;

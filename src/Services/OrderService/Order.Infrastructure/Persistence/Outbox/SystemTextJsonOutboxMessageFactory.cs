@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.Contracts.IntegrationEvents;
-using BuildingBlocks.Infrastructure.Persistence.Outbox;
+﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.IntegrationEvents;
 using System.Text.Json;
 
 namespace Order.Infrastructure.Persistence.Outbox

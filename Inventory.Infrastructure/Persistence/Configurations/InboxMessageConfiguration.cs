@@ -1,12 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BuildingBlocks.Infrastructure.Persistence.Inbox;
-using System.Data;
+using BuildingBlocks.Application.Messaging.Inbox;
 
 namespace Inventory.Infrastructure.Persistence.Configurations
 {
@@ -16,11 +10,21 @@ namespace Inventory.Infrastructure.Persistence.Configurations
         public void Configure(
             EntityTypeBuilder<InboxMessage> builder)
         {
-            builder.HasKey(x => x.MessageId);
+            builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Type)
-                .HasMaxLength(500)
+            builder.Property(x => x.Consumer)
+                .HasMaxLength(250)
                 .IsRequired();
+
+            builder.Property(x => x.ReceivedOnUtc)
+           .IsRequired();
+
+            builder.Property(x => x.ProcessedOnUtc);
+
+            builder.Property(x => x.RetryCount)
+                .IsRequired();
+
+            builder.Property(x => x.Error);
 
             //            دو Consumer همزمان می‌توانند این کار را بکنند:
 
@@ -33,8 +37,13 @@ namespace Inventory.Infrastructure.Persistence.Configurations
             //Insert X                    Insert X
 
             //پس باید Database Unique Constraint هم داشته باشیم.
-            builder.HasIndex(x => x.MessageId)
-                .IsUnique();
+
+            builder.HasIndex(x => new
+            {
+                x.Id,
+                x.Consumer
+            })
+            .IsUnique();
         }
     }
 }

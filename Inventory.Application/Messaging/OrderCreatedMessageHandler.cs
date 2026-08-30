@@ -1,6 +1,5 @@
-﻿using BuildingBlocks.Contracts.IntegrationEvents.Orders;
-using BuildingBlocks.Domain.Errors;
-using Inventory.Application.Abstractions.Messaging;
+﻿using BuildingBlocks.Application.Messaging.Inbox;
+using BuildingBlocks.Contracts.IntegrationEvents.Orders;
 using Inventory.Application.Abstractions.Persistence;
 using Inventory.Application.Features.Inventory.Reserve;
 using MediatR;
@@ -32,15 +31,20 @@ namespace Inventory.Application.Messaging
                 {
                     if (await _inbox.ExistsAsync(
                             message.EventId,
+                            nameof(OrderCreatedIntegrationEvent),
                             ct))
                     {
-                        return Result.Success();
+                        return;// Result.Success();
                     }
 
+                    //await _inbox.AddAsync(
+                    //    message.EventId,
+                    //    nameof(OrderCreatedIntegrationEvent),
+                    //    DateTime.UtcNow,
+                    //    ct);
+
                     await _inbox.AddAsync(
-                        message.EventId,
-                        nameof(OrderCreatedIntegrationEvent),
-                        DateTime.UtcNow,
+                       new InboxMessage(message.EventId, nameof(OrderCreatedIntegrationEvent), DateTime.UtcNow),
                         ct);
 
                     var items = message.Items
@@ -59,14 +63,14 @@ namespace Inventory.Application.Messaging
                         await _sender.Send(command, ct);
 
                     if (!result.IsSuccess)
-                        return result;
+                        return;// result;
 
                     await _inbox.MarkProcessedAsync(
                         message.EventId,
                         DateTime.UtcNow,
                         ct);
 
-                    return Result.Success();
+                    return;// Result.Success();
                 },
                 cancellationToken);
         }

@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Application;
-using BuildingBlocks.Domain.Errors;
+﻿using BuildingBlocks.Domain.Errors;
 using Order.Domain.Abnstractions;
 using Order.Domain;
 using System;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Order.Domain.Orders;
 using MediatR;
+using BuildingBlocks.Application.Abstractions.Persistence;
 
 namespace Order.Application.Features.Orders.CancelOrder
 {

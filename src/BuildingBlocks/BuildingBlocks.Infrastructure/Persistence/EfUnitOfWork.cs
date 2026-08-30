@@ -1,14 +1,14 @@
-﻿using BuildingBlocks.Application;
-using BuildingBlocks.Application.Abstractions.DomainEvents;
+﻿using BuildingBlocks.Application.Abstractions.DomainEvents;
+using BuildingBlocks.Application.Abstractions.Persistence;
+using BuildingBlocks.Application.Messaging;
 using BuildingBlocks.Domain.Errors;
 using BuildingBlocks.Infrastructure.Persistence.Extensions;
-using BuildingBlocks.Infrastructure.Persistence.Outbox;
 
 namespace BuildingBlocks.Infrastructure.Persistence
 {
-    public  class EfUnitOfWork : IUnitOfWork
+    public  class EfUnitOfWork<TDbContext> : IUnitOfWork where TDbContext : ApplicationDbContext
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly TDbContext  _dbContext;
 
         private readonly IDomainEventDispatcher _dispatcher;
 
@@ -17,7 +17,7 @@ namespace BuildingBlocks.Infrastructure.Persistence
         private readonly IOutboxMessageFactory _factory;
 
         public EfUnitOfWork(
-            ApplicationDbContext dbContext,
+            TDbContext dbContext,
             IDomainEventDispatcher dispatcher,
             IIntegrationEventCollector collector,
             IOutboxMessageFactory factory)

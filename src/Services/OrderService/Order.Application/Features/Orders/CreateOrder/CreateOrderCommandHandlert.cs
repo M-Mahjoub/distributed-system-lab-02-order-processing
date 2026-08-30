@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Application;
+﻿using BuildingBlocks.Application.Abstractions.Persistence;
 using MediatR;
 using Order.Domain;
 using Order.Domain.Abnstractions;

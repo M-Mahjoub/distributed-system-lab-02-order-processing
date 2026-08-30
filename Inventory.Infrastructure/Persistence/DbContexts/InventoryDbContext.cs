@@ -1,11 +1,12 @@
-﻿using BuildingBlocks.Infrastructure.Persistence.Inbox;
-using BuildingBlocks.Infrastructure.Persistence.Outbox;
+﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Application.Messaging.Inbox;
+using BuildingBlocks.Infrastructure.Persistence;
 using Inventory.Domain.Aggregates.ProductInventory;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Persistence.DbContexts
 {
-    public class InventoryDbContext : DbContext
+    public class InventoryDbContext : ApplicationDbContext
     {
         public DbSet<InboxMessage> InboxMessages =>
         Set<InboxMessage>();

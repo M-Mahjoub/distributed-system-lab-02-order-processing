@@ -27,6 +27,7 @@
     <Folder Include="Messaging\Serialization\" />
     <Folder Include="Messaging\Publishers\" />
     <Folder Include="Persistence\Outbox\" />
+    <Folder Include="Persistence\Transactions\" />
   </ItemGroup>
 
 </Project>
