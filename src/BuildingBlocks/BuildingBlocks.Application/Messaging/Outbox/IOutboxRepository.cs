@@ -1,4 +1,4 @@
-﻿namespace BuildingBlocks.Application.Messaging
+﻿namespace BuildingBlocks.Application.Messaging.Outbox
 {
     public interface IOutboxRepository
     {

@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Contracts.IntegrationEvents;
+﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Contracts.IntegrationEvents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,6 +41,10 @@ namespace Order.Infrastructure.BackgroundServices
                     scope.ServiceProvider
                         .GetRequiredService<OrderDbContext>();
 
+                var eventBus =
+                              scope.ServiceProvider
+                                  .GetRequiredService<IEventBus>();
+
                 var messages =
                     await db.OutboxMessages
                         .Where(x => x.ProcessedOnUtc == null)
@@ -61,9 +66,10 @@ namespace Order.Infrastructure.BackgroundServices
 
                     try
                     {
-                        //await publisher.PublishAsync(
-                        //                   integrationEvent,
-                        //                   stoppingToken);
+                        await eventBus.PublishAsync(
+                                           message.Type,
+                                           message.Payload,
+                                           stoppingToken);
                     }
                     catch (Exception ex)
                     {

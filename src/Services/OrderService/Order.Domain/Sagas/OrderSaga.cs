@@ -1,7 +1,7 @@
 ﻿namespace Order.Domain.Sagas
 {
     //چون Order شروع‌کننده‌ی Business Process است. Saga State را در Order Service قرار بدهیم
-    public sealed class OrderSagaState
+    public sealed class OrderSaga
     {
         public Guid Id { get; private set; }
 
@@ -19,11 +19,11 @@
 
         public bool OrderCancelled { get; private set; }
 
-        private OrderSagaState()
+        private OrderSaga()
         {
         }
 
-        public OrderSagaState(Guid orderId)
+        public OrderSaga(Guid orderId)
         {
             Id = Guid.NewGuid();
             OrderId = orderId;
@@ -39,7 +39,7 @@
         public void MarkPaymentSucceeded()
         {
             PaymentSucceeded = true;
-            Status = OrderSagaStatus.Completed;
+            Status = OrderSagaStatus.PaymentCompleted;
         }
 
         public void MarkPaymentFailed()

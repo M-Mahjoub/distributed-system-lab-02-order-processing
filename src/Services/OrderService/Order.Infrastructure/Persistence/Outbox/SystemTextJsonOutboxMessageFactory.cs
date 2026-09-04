@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Application.Messaging;
+﻿using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Contracts.IntegrationEvents;
 using System.Text.Json;
 

@@ -1,4 +1,5 @@
-﻿using BuildingBlocks.Application.Messaging;
+﻿using BuildingBlocks.Application.Messaging.Inbox;
+using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Order.Domain.Sagas;
@@ -14,9 +15,11 @@ namespace Order.Infrastructure.Persistence.DbContexts
         public DbSet<Order.Domain.Orders.Order> Orders { get; set; }
         public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
-        public DbSet<OrderSagaState> OrderSagaStates
-               => Set<OrderSagaState>();
+        public DbSet<OrderSaga> OrderSagas
+               => Set<OrderSaga>();
 
+        public DbSet<InboxMessage> InboxMessages =>
+                  Set<InboxMessage>();
 
         public override void Dispose()
         {

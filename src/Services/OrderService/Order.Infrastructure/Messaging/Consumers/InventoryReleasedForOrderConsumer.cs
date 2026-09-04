@@ -1,23 +1,25 @@
 ﻿using BuildingBlocks.Contracts.Inventory;
-using Order.Application.Messaging;
+using BuildingBlocks.Application.Messaging;
 
 namespace Order.Infrastructure.Messaging.Consumers;
 
 public sealed class InventoryReleasedForOrderConsumer
 {
-    private readonly IInventoryReleasedMessageHandler _handler;
+    private readonly ITransactionalMessageHandler<
+        InventoryReleasedForOrderIntegrationEvent> _handler;
 
     public InventoryReleasedForOrderConsumer(
-        IInventoryReleasedMessageHandler handler)
+        ITransactionalMessageHandler<
+            InventoryReleasedForOrderIntegrationEvent> handler)
     {
         _handler = handler;
     }
 
-    public async Task ConsumeAsync(
+    public Task ConsumeAsync(
         InventoryReleasedForOrderIntegrationEvent message,
         CancellationToken cancellationToken)
     {
-        await _handler.HandleAsync(
+        return _handler.HandleAsync(
             message,
             cancellationToken);
     }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Messaging\DomainEvents\" />
+    <Folder Include="Messaging\EventBuses\ymls\" />
     <Folder Include="Persistence\Extensions\" />
     <Folder Include="Services\" />
   </ItemGroup>
@@ -16,6 +17,7 @@
     
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
 
   </ItemGroup>
 

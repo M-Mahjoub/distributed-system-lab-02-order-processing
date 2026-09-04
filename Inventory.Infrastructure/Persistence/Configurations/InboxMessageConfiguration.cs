@@ -10,7 +10,13 @@ namespace Inventory.Infrastructure.Persistence.Configurations
         public void Configure(
             EntityTypeBuilder<InboxMessage> builder)
         {
-            builder.HasKey(x => x.Id);
+            builder.ToTable("inbox_messages");
+
+            builder.HasKey(x => new
+            {
+                x.Id,
+                x.Consumer
+            });
 
             builder.Property(x => x.Consumer)
                 .HasMaxLength(250)

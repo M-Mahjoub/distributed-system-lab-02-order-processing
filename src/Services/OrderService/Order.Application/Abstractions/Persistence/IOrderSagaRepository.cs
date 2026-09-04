@@ -4,12 +4,12 @@ namespace Order.Application.Abstractions.Persistence
 {
     public interface IOrderSagaRepository
     {
-        Task<OrderSagaState?> GetByOrderIdAsync(
+        Task<OrderSaga?> GetByOrderIdAsync(
             Guid orderId,
             CancellationToken cancellationToken = default);
 
         Task AddAsync(
-            OrderSagaState saga,
+            OrderSaga saga,
             CancellationToken cancellationToken = default);
     }
 }

@@ -3,7 +3,7 @@ using Order.Domain.Abnstractions;
 using Order.Domain.Orders;
 using Order.Infrastructure.Persistence.DbContexts;
 
-namespace Order.Infrastructure.Repositories
+namespace Order.Infrastructure.Persistence.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

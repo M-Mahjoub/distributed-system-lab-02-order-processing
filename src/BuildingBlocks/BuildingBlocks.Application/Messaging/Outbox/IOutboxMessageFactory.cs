@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Contracts.IntegrationEvents;
 
-namespace BuildingBlocks.Application.Messaging
+namespace BuildingBlocks.Application.Messaging.Outbox
 {
     public interface IOutboxMessageFactory
     {

@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Application;
+using BuildingBlocks.Application.Abstractions.Persistence;
 using BuildingBlocks.Domain.Errors;
 using Inventory.Application.Abstractions.Persistence;
 using Inventory.Domain;
@@ -11,11 +12,14 @@ namespace Inventory.Application.Features.Inventory.Reserve
     : IRequestHandler<ReserveInventoryCommand, Result>
     {
         private readonly IProductInventoryRepository _repository;
+        public IUnitOfWork _unitOfWork { get; set; }
 
-        public ReserveInventoryCommandHandler(
+
+        public ReserveInventoryCommandHandler(IUnitOfWork unitOfWork,
             IProductInventoryRepository repository)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(
@@ -50,6 +54,8 @@ namespace Inventory.Application.Features.Inventory.Reserve
                 if (!result.IsSuccess)
                     return result;
             }
+
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             return Result.Success();
         }

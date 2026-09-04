@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Contracts.Inventory;
 using Order.Application.Abstractions.Persistence;
 using Order.Domain.Abnstractions;
@@ -65,7 +66,8 @@ namespace Order.Application.Sagas
             var message =
                 new ReleaseInventoryIntegrationCommand(
                     Guid.NewGuid(),
-                    orderId);
+                    orderId,
+                    DateTime.UtcNow);
 
             var outboxMessage =
                               new OutboxMessage(
@@ -73,11 +75,11 @@ namespace Order.Application.Sagas
                                   typeof(ReleaseInventoryIntegrationCommand).FullName!,
                                   JsonSerializer.Serialize(message),
                                   DateTime.UtcNow);
-                              
-                                      await _outboxRepository.AddAsync(
-                                          outboxMessage,
-                                          cancellationToken);
-                                  }
+
+            await _outboxRepository.AddAsync(
+                outboxMessage,
+                cancellationToken);
+        }
 
         public async Task HandleInventoryReleasedAsync(
     Guid orderId,

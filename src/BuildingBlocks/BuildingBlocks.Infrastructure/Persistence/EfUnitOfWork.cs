@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Application.Abstractions.DomainEvents;
 using BuildingBlocks.Application.Abstractions.Persistence;
-using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Domain.Errors;
 using BuildingBlocks.Infrastructure.Persistence.Extensions;
 

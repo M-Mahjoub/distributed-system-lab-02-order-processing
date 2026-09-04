@@ -4,13 +4,13 @@ using Order.Domain.Sagas;
 
 namespace Order.Infrastructure.Persistence.Configurations
 {
-    public sealed class OrderSagaStateConfiguration
-        : IEntityTypeConfiguration<OrderSagaState>
+    public sealed class OrderSagaConfiguration
+        : IEntityTypeConfiguration<OrderSaga>
     {
         public void Configure(
-            EntityTypeBuilder<OrderSagaState> builder)
+            EntityTypeBuilder<OrderSaga> builder)
         {
-            builder.ToTable("order_saga_states");
+            builder.ToTable("order_sagas");
 
             builder.HasKey(x => x.Id);
 

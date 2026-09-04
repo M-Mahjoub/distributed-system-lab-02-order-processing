@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Application.Messaging;
+﻿using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Infrastructure.Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

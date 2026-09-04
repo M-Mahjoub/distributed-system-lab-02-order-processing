@@ -68,3 +68,38 @@ public sealed class InventoryReleasedMessageHandler
             cancellationToken);
     }
 }
+
+//using BuildingBlocks.Contracts.Inventory;
+//using Order.Application.Abstractions.Persistence;
+
+//namespace Order.Application.Messaging;
+
+//public sealed class InventoryReleasedMessageHandler
+//    : IInventoryReleasedMessageHandler
+//{
+//    private readonly IOrderSagaRepository _sagaRepository;
+
+//    public InventoryReleasedMessageHandler(
+//        IOrderSagaRepository sagaRepository)
+//    {
+//        _sagaRepository = sagaRepository;
+//    }
+
+//    public async Task HandleAsync(
+//        InventoryReleasedForOrderIntegrationEvent message,
+//        CancellationToken cancellationToken)
+//    {
+//        var saga =
+//            await _sagaRepository.GetByOrderIdAsync(
+//                message.OrderId,
+//                cancellationToken);
+
+//        if (saga is null)
+//        {
+//            throw new InvalidOperationException(
+//                $"Saga for Order '{message.OrderId}' was not found.");
+//        }
+
+//        saga.MarkInventoryReleased();
+//    }
+//}

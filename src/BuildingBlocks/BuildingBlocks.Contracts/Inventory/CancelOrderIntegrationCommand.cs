@@ -2,7 +2,7 @@
 
 namespace BuildingBlocks.Contracts.Inventory
 {
-    public sealed record ReleaseInventoryIntegrationCommand(
+    public sealed record CancelOrderIntegrationCommand(
       Guid EventId,
       Guid OrderId,
       DateTime OccurredOnUtc) : IntegrationEvent(EventId, OccurredOnUtc);

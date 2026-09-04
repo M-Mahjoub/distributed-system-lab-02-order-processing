@@ -1,5 +1,5 @@
-﻿using BuildingBlocks.Application.Messaging;
-using BuildingBlocks.Application.Messaging.Inbox;
+﻿using BuildingBlocks.Application.Messaging.Inbox;
+using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Infrastructure.Persistence;
 using Inventory.Domain.Aggregates.ProductInventory;
 using Microsoft.EntityFrameworkCore;

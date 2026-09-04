@@ -1,7 +1,7 @@
-﻿using BuildingBlocks.Contracts.IntegrationEvents;
+﻿using BuildingBlocks.Contracts.IntegrationEvents.Orders;
 using Order.Infrastructure.Messaging.IntegrationEvents;
 
-namespace Order.Infrastructure.IntegrationEvents
+namespace BuildingBlocks.Contracts.IntegrationEvents
 {
     public class IntegrationEventTypeRegistry : IIntegrationEventTypeRegistry
     {
@@ -9,7 +9,7 @@ namespace Order.Infrastructure.IntegrationEvents
 
         public IntegrationEventTypeRegistry()
         {
-            _types = typeof(IntegrationEventTypeRegistry)
+            _types = typeof(OrderCreatedIntegrationEvent)
                 .Assembly
                 .GetTypes()
                 .Where(t => typeof(IIntegrationEvent).IsAssignableFrom(t)

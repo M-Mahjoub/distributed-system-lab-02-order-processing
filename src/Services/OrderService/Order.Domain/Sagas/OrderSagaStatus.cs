@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Order.Domain.Sagas;
 
-namespace Order.Domain.Sagas
+public enum OrderSagaStatus
 {
-    public enum OrderSagaStatus
-    {
-        Started,
+    Started = 1,
 
-        ReservingInventory,
+    InventoryReservationPending = 2,
 
-        InventoryReserved,
+    InventoryReserved = 3,
 
-        ProcessingPayment,
+    PaymentPending = 4,
 
-        Completed,
+    PaymentCompleted = 5,
 
-        Compensating,
+    Compensating = 6,
 
-        CompensationCompleted,
+    CompensationCompleted = 7,
 
-        Failed
-    }
+    Failed = 8
 }

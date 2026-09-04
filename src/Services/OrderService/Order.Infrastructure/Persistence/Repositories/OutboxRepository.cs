@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Application.Messaging;
+﻿using BuildingBlocks.Application.Messaging.Outbox;
 using Order.Infrastructure.Persistence.DbContexts;
 
 namespace Order.Infrastructure.Persistence.Repositories;

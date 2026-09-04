@@ -26,6 +26,9 @@ public sealed class EfTransactionManager<TDbContext>
         {
             await action(cancellationToken);
 
+            await _dbContext.SaveChangesAsync(
+               cancellationToken);
+
             await transaction.CommitAsync(
                 cancellationToken);
         }

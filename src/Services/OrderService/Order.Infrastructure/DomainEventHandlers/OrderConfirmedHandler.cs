@@ -22,10 +22,10 @@ namespace Order.Infrastructure.DomainEventHandlers
         {
             var integrationEvent =
                 new OrderConfirmedIntegrationEvent(
-                    Guid.NewGuid(),    
+                    Guid.NewGuid(),
                     domainEvent.OccurredOnUtc,
-                    domainEvent.OrderId,
-                    domainEvent.CustomerId);
+                    domainEvent.OrderId.Value,
+                    domainEvent.CustomerId.Value);
 
             _collector.Add(integrationEvent);
         }

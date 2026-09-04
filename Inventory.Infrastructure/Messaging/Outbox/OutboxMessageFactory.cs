@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using BuildingBlocks.Application.Messaging;
+using BuildingBlocks.Application.Messaging.Outbox;
 using BuildingBlocks.Contracts.IntegrationEvents;
 
 namespace Inventory.Infrastructure.Messaging.Outbox;
