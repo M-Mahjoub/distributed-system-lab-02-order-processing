@@ -1,5 +1,6 @@
 ﻿using ShoppingAgent.Application.Abstractions;
 using ShoppingAgent.Application.AI;
+using ShoppingAgent.Application.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,48 +40,47 @@ namespace ShoppingAgent.Application.Services
                    _contextManager.BuildContext(
                        conversation);
 
-                var response =
+              return
                     await _chatModel.GenerateAsync(
                         context,
-                        _tools,
                         cancellationToken);
 
-                if (response.ToolCalls.Count == 0)
-                {
-                    conversation.AddAssistantMessage(
-                        response.Text ?? string.Empty);
+                //if (response.ToolCalls.Count == 0)
+                //{
+                //    conversation.AddAssistantMessage(
+                //        response.Text ?? string.Empty);
 
-                    return response.Text ?? string.Empty;
-                }
+                //    return response.Text ?? string.Empty;
+                //}
 
-                // Tool calls را اجرا می‌کنیم
-                foreach (var toolCall in response.ToolCalls)
-                {
-                    var tool =
-                        _tools.FirstOrDefault(x =>
-                            x.Name == toolCall.Name);
+                //// Tool calls را اجرا می‌کنیم
+                //foreach (var toolCall in response.ToolCalls)
+                //{
+                //    var tool =
+                //        _tools.FirstOrDefault(x =>
+                //            x.Name == toolCall.Name);
 
-                    if (tool is null)
-                    {
-                        throw new InvalidOperationException(
-                            $"Tool '{toolCall.Name}' not found.");
-                    }
+                //    if (tool is null)
+                //    {
+                //        throw new InvalidOperationException(
+                //            $"Tool '{toolCall.Name}' not found.");
+                //    }
 
-                    var result =
-                        await tool.ExecuteAsync(
-                            new Dictionary<string, object?>(
-                                toolCall.Arguments),
-                            cancellationToken);
+                //    var result =
+                //        await tool.ExecuteAsync(
+                //            new Dictionary<string, object?>(
+                //                toolCall.Arguments),
+                //            cancellationToken);
 
 
-                    // اینجا باید Tool Result را
-                    // به Conversation برگردانیم.
+                //    // اینجا باید Tool Result را
+                //    // به Conversation برگردانیم.
 
-                    conversation.AddToolResult(
-                        toolCall.CallId,
-                        result);
+                //    conversation.AddToolResult(
+                //        toolCall.CallId,
+                //        result);
 
-                }
+                //}
             }
         }
     }

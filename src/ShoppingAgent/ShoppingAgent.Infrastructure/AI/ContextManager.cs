@@ -1,5 +1,6 @@
 ﻿using ShoppingAgent.Application.Abstractions;
 using ShoppingAgent.Application.AI;
+using ShoppingAgent.Application.Memory;
 using ShoppingAgent.Domain;
 
 namespace ShoppingAgent.Infrastructure.AI
@@ -18,7 +19,8 @@ namespace ShoppingAgent.Infrastructure.AI
         }
 
         public IReadOnlyList<ChatMessageDto> BuildContext(
-            Conversation conversation)
+            Conversation conversation,
+            WorkingMemory? workingMemory)
         {
             var result = new List<ChatMessageDto>();
 

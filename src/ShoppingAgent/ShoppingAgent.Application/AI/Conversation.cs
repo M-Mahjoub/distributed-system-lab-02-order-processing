@@ -10,12 +10,20 @@ namespace ShoppingAgent.Application.AI
 
         public string? Summary { get; private set; }
 
+        public int SummarizedMessageCount { get; private set; }
+
+        public DateTimeOffset CreatedAt { get; }
+
+        public DateTimeOffset UpdatedAt { get; private set; }
+
         public IReadOnlyCollection<ChatMessageDto> Messages =>
             _messages.AsReadOnly();
 
         public Conversation(string id)
         {
             Id = id;
+            CreatedAt = DateTimeOffset.UtcNow;
+            UpdatedAt = CreatedAt;
         }
 
         public Conversation(
@@ -28,9 +36,15 @@ namespace ShoppingAgent.Application.AI
             Summary = summary;
         }
 
-        public void SetSummary(string summary)
+        public void SetSummary(
+        string summary,
+        int summarizedMessageCount)
         {
             Summary = summary;
+            SummarizedMessageCount =
+                summarizedMessageCount;
+
+            UpdatedAt = DateTimeOffset.UtcNow;
         }
 
         public void AddSystemMessage(string text)
@@ -43,28 +57,37 @@ namespace ShoppingAgent.Application.AI
                         new TextChatContent(text)
                         }
                     ));
+
+            UpdatedAt = DateTimeOffset.UtcNow;
         }
 
-        public void AddUserMessage(Guid messageId, string text)
+        public ChatMessageDto AddUserMessage(Guid messageId, string text)
         {
-            _messages.Add(
-                new ChatMessageDto(
+            var chatMessage = new ChatMessageDto(
                     messageId,
                     MessageRole.User,
                     new List<ChatContent> {
                         new TextChatContent(text)
-                        }));
+                        });
+            _messages.Add(chatMessage);
+
+            UpdatedAt = DateTimeOffset.UtcNow;
+
+            return chatMessage;
         }
 
-        public void AddAssistantMessage(string text)
+        public ChatMessageDto AddAssistantMessage(string text)
         {
-            _messages.Add(
-                new ChatMessageDto(
+            var chatMessage = new ChatMessageDto(
                     Guid.NewGuid(),
                     MessageRole.Assistant,
                     new List<ChatContent> {
                         new TextChatContent(text)
-                        }));
+                        });
+                _messages.Add(chatMessage );
+            UpdatedAt = DateTimeOffset.UtcNow;
+
+            return chatMessage;
         }
 
         public void AddToolCall(

@@ -1,4 +1,4 @@
-﻿namespace ShoppingAgent.Api.Requests
+﻿namespace ShoppingAgent.Application.Contracts
 {
     public sealed record ChatRequest(
      string ConversationId,

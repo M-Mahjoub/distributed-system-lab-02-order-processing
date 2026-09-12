@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace ShoppingAgent.Application.AI
 {
     public sealed record ChatResponseDto(
-     string? Text,
-     IReadOnlyList<ChatToolCallDto> ToolCalls);
+     string ConversationId,
+     string Message);
 
     public sealed record ChatToolCallDto(
     string CallId,

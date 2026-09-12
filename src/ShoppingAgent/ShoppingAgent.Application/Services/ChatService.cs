@@ -1,113 +1,159 @@
-﻿using ShoppingAgent.Application.Abstractions;
+﻿
 using ShoppingAgent.Application.AI;
-using ShoppingAgent.Domain;
+using ShoppingAgent.Application.Memory;
+using ShoppingAgent.Application.Contracts;
+using ShoppingAgent.Application.Abstractions;
 
-namespace ShoppingAgent.Application.Services
+namespace ShoppingAgent.Application.Conversations;
+
+public sealed class ChatService
 {
-    public sealed class ChatService
+    private readonly IConversationRepository _conversationRepository;
+    private readonly IWorkingMemory _workingMemory;
+    private readonly IContextManager _contextManager;
+    private readonly IChatModel _chatModel;
+    private readonly IncrementalSummaryService _summaryService;
+
+    public ChatService(
+        IConversationRepository conversationRepository,
+        IWorkingMemory workingMemory,
+        IContextManager contextManager,
+        IChatModel chatModel,
+        IncrementalSummaryService summaryService)
     {
-        //    ChatService
-        //│
-        //├── Get Conversation from Redis
-        //│
-        //├── اگر نبود → Create
-        //│
-        //└── AgentService
-        //         │
-        //         ├── LLM
-        //         ├── Tool
-        //         ├── Tool Result
-        //         └── Final Answer
-        //مدیریت Conversation و ذخیره‌سازی باشد
-        private const int SummaryThreshold = 20;
+        _conversationRepository = conversationRepository;
+        _workingMemory = workingMemory;
+        _contextManager = contextManager;
+        _chatModel = chatModel;
+        _summaryService = summaryService;
+    }
 
-        private readonly IConversationRepository _repository;
-        private readonly IChatModel _chatModel;
-        private readonly IContextManager _contextManager;
-        private readonly IConversationSummarizer _summarizer;
-        private readonly IAgentTool _tool;
+    public async Task<ChatResponseDto> SendMessageAsync(
+        ChatRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        // --------------------------------------------------
+        // 1. Load conversation
+        // --------------------------------------------------
 
-        public ChatService(
-            IConversationRepository repository,
-            IChatModel chatModel,
-            IContextManager contextManager,
-            IConversationSummarizer summarizer,
-            IAgentTool tool)
+        var conversation =
+            await _conversationRepository.GetAsync(
+                request.ConversationId,
+                cancellationToken);
+
+        // --------------------------------------------------
+        // 2. Create conversation if it doesn't exist
+        // --------------------------------------------------
+
+        if (conversation is null)
         {
-            _repository = repository;
-            _chatModel = chatModel;
-            _contextManager = contextManager;
-            _summarizer = summarizer;
-            _tool = tool;
+            conversation =
+                new Conversation(
+                    request.ConversationId);
+
+            await _conversationRepository.CreateAsync(
+                conversation,
+                cancellationToken);
         }
 
-        public async Task<string> ChatAsync(
-            string conversationId,
-            Guid messageId,
-            string message,
-            CancellationToken cancellationToken = default)
+        // --------------------------------------------------
+        // 3. Add user message
+        // --------------------------------------------------
+
+        var userMessage =
+            conversation.AddUserMessage(
+                request.MessageId,
+                request.Message);
+
+        // --------------------------------------------------
+        // 4. Persist user message
+        // --------------------------------------------------
+
+        var added =
+            await _conversationRepository.AppendMessageAsync(
+                conversation.Id,
+                userMessage,
+                cancellationToken);
+
+        if (!added)
         {
-            var conversation =
-                await _repository.GetAsync(
-                    conversationId,
-                    cancellationToken);
-
-            if (conversation is null)
-            {
-                conversation =
-                    new Conversation(conversationId);
-
-                conversation.AddSystemMessage(
-                    "You are a helpful shopping assistant.");
-
-
-                await _repository.CreateAsync(
-                    conversation,
-                    cancellationToken);
-            }
-
-            conversation.AddUserMessage(messageId,message);
-
-            await _repository.AppendMessageAsync(
-                              conversationId,
-                              conversation.Messages.Last(),
-                              cancellationToken);
-
-            var context =
-                _contextManager.BuildContext(
-                    conversation);
-
-            var response =
-                await _chatModel.GenerateAsync(
-                    context,
-                  new List<IAgentTool> { _tool },
-                  cancellationToken: cancellationToken);
-
-            conversation.AddAssistantMessage(response.Text);
-
-            await _repository.AppendMessageAsync(
-                              conversationId,
-                              conversation.Messages.Last(),
-                              cancellationToken);
-
-            if (conversation.Messages.Count >=
-                SummaryThreshold)
-            {
-                var messagesToSummarize =
-                    conversation.Messages
-                        .Where(x =>
-                            x.Role != MessageRole.System)
-                        .ToList();
-
-                var summary =
-                    await _summarizer.SummarizeAsync(
-                        messagesToSummarize,
-                        cancellationToken);
-
-                conversation.SetSummary(summary);
-            }
-
-            return response.Text;
+            // Message already exists.
+            // Idempotency protection.
+            return new ChatResponseDto(
+                conversation.Id,
+                "This message has already been processed.");
         }
+
+        // --------------------------------------------------
+        // 5. Load Working Memory
+        // --------------------------------------------------
+
+        var workingMemory =
+            await _workingMemory.GetAsync(
+                conversation.Id,
+                cancellationToken);
+
+        // If no working memory exists, create one.
+        workingMemory ??= new WorkingMemory();
+
+        // --------------------------------------------------
+        // 6. Build LLM Context
+        // --------------------------------------------------
+
+        var context =
+            _contextManager.BuildContext(
+                conversation,
+                workingMemory);
+
+        // --------------------------------------------------
+        // 7. Ask LLM
+        // --------------------------------------------------
+
+        var assistantResponse =
+            await _chatModel.GenerateAsync(
+                context,
+               cancellationToken: cancellationToken);
+
+        // --------------------------------------------------
+        // 8. Add assistant message
+        // --------------------------------------------------
+
+        var assistantMessage =
+            conversation.AddAssistantMessage(
+                assistantResponse);
+
+        // --------------------------------------------------
+        // 9. Persist assistant message
+        // --------------------------------------------------
+
+        await _conversationRepository.AppendMessageAsync(
+            conversation.Id,
+            assistantMessage,
+            cancellationToken);
+
+        // --------------------------------------------------
+        // 10. Save Working Memory
+        // --------------------------------------------------
+
+        await _workingMemory.SaveAsync(
+            conversation.Id,
+            workingMemory,
+            cancellationToken);
+
+        // --------------------------------------------------
+        // 11. Incremental Summary
+        // --------------------------------------------------
+
+        await _summaryService.TrySummarizeAsync(
+            conversation,
+            cancellationToken);
+
+        // --------------------------------------------------
+        // 12. Return API response
+        // --------------------------------------------------
+
+        return new ChatResponseDto(
+            conversation.Id,
+            assistantResponse);
     }
 }

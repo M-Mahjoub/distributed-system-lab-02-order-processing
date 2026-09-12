@@ -1,6 +1,7 @@
-﻿using ShoppingAgent.Api.Requests;
-using ShoppingAgent.Application.Abstractions;
+﻿using ShoppingAgent.Application.Abstractions;
 using ShoppingAgent.Application.AI;
+using ShoppingAgent.Application.Contracts;
+using ShoppingAgent.Application.Conversations;
 using ShoppingAgent.Application.Services;
 using ShoppingAgent.Domain;
 using ShoppingAgent.Infrastructure;
@@ -48,10 +49,8 @@ app.MapPost(
         CancellationToken cancellationToken) =>
     {
         var response =
-            await chatService.ChatAsync(
-                request.ConversationId,
-                Guid.NewGuid(),
-                request.Message,
+            await chatService.SendMessageAsync(
+                request,
                 cancellationToken);
 
         return Results.Ok(

@@ -48,7 +48,7 @@ namespace ShoppingAgent.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateSummaryAsync(string conversationId, string summary, CancellationToken cancellationToken = default)
+        public Task UpdateSummaryAsync(string conversationId, string summary, int summarizedMessageCount, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

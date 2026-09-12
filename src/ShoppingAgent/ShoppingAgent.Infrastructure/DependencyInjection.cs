@@ -3,8 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OllamaSharp;
 using ShoppingAgent.Application.Abstractions;
+using ShoppingAgent.Application.Conversations;
+using ShoppingAgent.Application.Memory;
 using ShoppingAgent.Application.Services;
 using ShoppingAgent.Infrastructure.AI;
+using ShoppingAgent.Infrastructure.Memory;
 using ShoppingAgent.Infrastructure.Repositories;
 using ShoppingAgent.Infrastructure.Tools;
 using StackExchange.Redis;
@@ -58,6 +61,10 @@ namespace ShoppingAgent.Infrastructure
             services.AddScoped<
                      IContextManager,
                      ContextManager>();
+
+            services.AddScoped<
+                     ILongTermMemory,
+                     RedisLongTermMemory>();
 
             return services;
         }

@@ -17,6 +17,7 @@ namespace ShoppingAgent.Infrastructure.AI
         }
 
         public async Task<string> SummarizeAsync(
+            string? previousSummary,
             IReadOnlyList<ChatMessageDto> messages,
             CancellationToken cancellationToken = default)
         {
@@ -55,10 +56,9 @@ namespace ShoppingAgent.Infrastructure.AI
 
             var result = await _chatModel.GenerateAsync(
                 summaryMessages,
-                null,
                cancellationToken: cancellationToken);
 
-            return result.Text;
+            return result;
         }
     }
 }

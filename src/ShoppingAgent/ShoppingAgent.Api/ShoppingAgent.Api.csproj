@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ShoppingAgent.Infrastructure\ShoppingAgent.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Requests\" />
+  </ItemGroup>
+
 </Project>

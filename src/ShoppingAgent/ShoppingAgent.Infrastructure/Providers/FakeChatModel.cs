@@ -12,7 +12,7 @@ namespace ShoppingAgent.Application.AI
                 $"You said: {prompt}");
         }
 
-        public Task<ChatResponseDto> GenerateAsync(IEnumerable<ChatMessageDto> messages, IEnumerable<IAgentTool> tools, CancellationToken cancellationToken = default)
+        public Task<string> GenerateAsync(IEnumerable<ChatMessageDto> messages, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

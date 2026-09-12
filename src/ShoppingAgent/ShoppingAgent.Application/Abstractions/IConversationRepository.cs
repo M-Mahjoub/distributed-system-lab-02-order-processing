@@ -20,6 +20,7 @@ namespace ShoppingAgent.Application.Abstractions
         Task UpdateSummaryAsync(
             string conversationId,
             string summary,
+            int summarizedMessageCount,
             CancellationToken cancellationToken = default);
     }
 }

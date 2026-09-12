@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ShoppingAgent.Application.AI;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using ShoppingAgent.Application.AI;
 
 namespace ShoppingAgent.Application.Abstractions
 {
     public interface IChatModel
     {
-        Task<ChatResponseDto> GenerateAsync(
+        Task<string> GenerateAsync(
             IEnumerable<ChatMessageDto> messages,
-            IEnumerable<IAgentTool> tools,
             CancellationToken cancellationToken = default);
     }
 }

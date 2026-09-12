@@ -156,6 +156,7 @@ namespace ShoppingAgent.Infrastructure.Repositories
         public async Task UpdateSummaryAsync(
             string conversationId,
             string summary,
+            int summarizedMessageCount,
             CancellationToken cancellationToken = default)
         {
             var key =

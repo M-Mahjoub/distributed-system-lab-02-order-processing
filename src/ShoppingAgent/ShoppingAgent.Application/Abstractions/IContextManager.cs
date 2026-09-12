@@ -1,15 +1,10 @@
 ﻿using ShoppingAgent.Application.AI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ShoppingAgent.Application.Abstractions
+namespace ShoppingAgent.Application.Memory;
+
+public interface IContextManager
 {
-    public interface IContextManager
-    {
-        public IReadOnlyList<ChatMessageDto> BuildContext(
-                                             Conversation conversation);
-    }
+    IReadOnlyList<ChatMessageDto> BuildContext(
+        Conversation conversation,
+        WorkingMemory? workingMemory = null);
 }
