@@ -1,4 +1,5 @@
 ﻿using ShoppingAgent.Application.Abstractions;
+using ShoppingAgent.Application.Agents;
 using ShoppingAgent.Application.AI;
 using ShoppingAgent.Application.Memory;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace ShoppingAgent.Application.Services
 {
     //مسئول چرخه‌ی LLM ↔ Tool باشد.
-    public sealed class AgentService
+    public sealed class AgentService : IAgentService
     {
         private readonly IChatModel _chatModel;
         private readonly IContextManager _contextManager;
@@ -82,6 +83,15 @@ namespace ShoppingAgent.Application.Services
 
                 //}
             }
+        }
+
+        public async Task<string> RunAsync(
+       IReadOnlyList<ChatMessageDto> context,
+       CancellationToken cancellationToken = default)
+        {
+            return await _chatModel.GenerateAsync(
+                context,
+                cancellationToken);
         }
     }
 }

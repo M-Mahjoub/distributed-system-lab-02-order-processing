@@ -1,10 +1,8 @@
-﻿using ShoppingAgent.Application.Abstractions;
-using ShoppingAgent.Application.AI;
-using ShoppingAgent.Application.Contracts;
+﻿using ShoppingAgent.Application.Contracts;
 using ShoppingAgent.Application.Conversations;
-using ShoppingAgent.Application.Services;
-using ShoppingAgent.Domain;
 using ShoppingAgent.Infrastructure;
+using ShoppingAgent.Infrastructure.A2A;
+using ShoppingAgent.Infrastructure.MCP;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,30 +13,59 @@ builder.Services.AddOpenApi()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+var mcpManager =
+    app.Services.GetRequiredService<McpClientManager>();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+await mcpManager.ConnectAsync(
+    new McpServerConnection(
+        "product",
+        "http://localhost:3001"));
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+await mcpManager.ConnectAsync(
+    new McpServerConnection(
+        "inventory",
+        "http://localhost:3002"));
+
+app.MapGet(
+    "/mcp/tools",
+    async (
+        McpClientManager manager,
+        CancellationToken cancellationToken) =>
+    {
+        var tools =
+            await manager.GetAllToolsAsync(
+                cancellationToken);
+
+        return Results.Ok(
+            tools.Select(x => new
+            {
+                x.Name,
+                x.Description
+            }));
+    });
+
+app.MapGet(
+    "/a2a/inventory-test",
+    async (
+        A2AClientFactory factory,
+        CancellationToken cancellationToken) =>
+    {
+        var client =
+            await factory.CreateAsync(
+                "http://localhost:4001/",
+                cancellationToken);
+
+        //SDK درخواست A2A را به این handler می‌رساند.
+        var inventoryClient =
+            new InventoryAgentClient(client);
+
+        var result =
+            await inventoryClient.SendAsync(
+                "Check inventory",
+                cancellationToken);
+
+        return Results.Ok(result);
+    });
 
 //دو سبک برای ساخت API داریم: Controller-based API (سبک قدیمی‌تر و رایج). 2- Minimal API (از .NET 6 به بعد)
 app.MapPost(
@@ -64,8 +91,3 @@ app.MapPost(
     });
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

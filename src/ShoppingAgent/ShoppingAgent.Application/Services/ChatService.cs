@@ -3,6 +3,7 @@ using ShoppingAgent.Application.AI;
 using ShoppingAgent.Application.Memory;
 using ShoppingAgent.Application.Contracts;
 using ShoppingAgent.Application.Abstractions;
+using ShoppingAgent.Application.Agents;
 
 namespace ShoppingAgent.Application.Conversations;
 
@@ -12,6 +13,7 @@ public sealed class ChatService
     private readonly IWorkingMemory _workingMemory;
     private readonly IContextManager _contextManager;
     private readonly IChatModel _chatModel;
+    //private readonly IAgentService _agentService;
     private readonly IncrementalSummaryService _summaryService;
 
     public ChatService(
@@ -19,6 +21,7 @@ public sealed class ChatService
         IWorkingMemory workingMemory,
         IContextManager contextManager,
         IChatModel chatModel,
+        //IAgentService agentService,
         IncrementalSummaryService summaryService)
     {
         _conversationRepository = conversationRepository;
@@ -26,6 +29,7 @@ public sealed class ChatService
         _contextManager = contextManager;
         _chatModel = chatModel;
         _summaryService = summaryService;
+        //_agentService = agentService;
     }
 
     public async Task<ChatResponseDto> SendMessageAsync(
@@ -113,6 +117,12 @@ public sealed class ChatService
             await _chatModel.GenerateAsync(
                 context,
                cancellationToken: cancellationToken);
+
+
+        //var assistantResponse =
+        //                await _agentService.RunAsync(
+        //                       context,
+        //                       cancellationToken);
 
         // --------------------------------------------------
         // 8. Add assistant message

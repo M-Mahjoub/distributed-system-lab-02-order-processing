@@ -6,7 +6,9 @@ using ShoppingAgent.Application.Abstractions;
 using ShoppingAgent.Application.Conversations;
 using ShoppingAgent.Application.Memory;
 using ShoppingAgent.Application.Services;
+using ShoppingAgent.Infrastructure.A2A;
 using ShoppingAgent.Infrastructure.AI;
+using ShoppingAgent.Infrastructure.MCP;
 using ShoppingAgent.Infrastructure.Memory;
 using ShoppingAgent.Infrastructure.Repositories;
 using ShoppingAgent.Infrastructure.Tools;
@@ -27,7 +29,7 @@ namespace ShoppingAgent.Infrastructure
             var ollama = new OllamaApiClient(
            new Uri("http://localhost:11434"),
            "qwen3:1.7b");
-             
+
             IChatClient chatClient = ollama;
 
             services.AddSingleton(chatClient);
@@ -49,22 +51,33 @@ namespace ShoppingAgent.Infrastructure
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(redisConnection!));
 
+            // -------------------------
+            // MCP
+            // -------------------------
+
+            services.AddSingleton<McpClientManager>();
+
+
+            var mcpClient =
+                        ShoppingMcpClient.CreateAsync(
+                           "http://localhost:3001").Result;
+
+            services.AddSingleton(mcpClient);
+
+
+            services.AddSingleton<A2AClientFactory>();
             services.AddSingleton<IConversationRepository, RedisConversationRepository>();
+            services.AddScoped<IConversationSummarizer, ConversationSummarizer>();
             services.AddScoped<IChatModel, OllamaChatModel>();
             services.AddScoped<ChatService>();
-            services.AddScoped<AgentService>(); 
+            services.AddScoped<AgentService>();
             services.AddScoped<IConversationSummarizer, ConversationSummarizer>();
             services.AddScoped<IAgentTool, GetCurrentTimeTool>();
-            services.AddScoped<
-                     ITokenCounter,
-                     SimpleTokenCounter>();
-            services.AddScoped<
-                     IContextManager,
-                     ContextManager>();
-
-            services.AddScoped<
-                     ILongTermMemory,
-                     RedisLongTermMemory>();
+            services.AddScoped<ITokenCounter, SimpleTokenCounter>();
+            services.AddScoped<IContextManager, ContextManager>();
+            services.AddScoped<ILongTermMemory, RedisLongTermMemory>();
+            services.AddScoped<IncrementalSummaryService>();
+            services.AddScoped<IWorkingMemory, RedisWorkingMemory>();
 
             return services;
         }

@@ -1,0 +1,6 @@
+@InventoryMcpServer_HostAddress = http://localhost:5197
+
+GET {{InventoryMcpServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

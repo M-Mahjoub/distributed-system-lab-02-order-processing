@@ -6,6 +6,7 @@ using ShoppingAgent.Infrastructure.MCP;
 
 namespace ShoppingAgent.Infrastructure.AI;
 
+//چون OllamaChatModel باید مسئول مدل باشد، نه Agent Loop و نه MCP.
 public sealed class OllamaChatModel : IChatModel
 {
     private readonly IChatClient _chatClient;
@@ -44,7 +45,7 @@ public sealed class OllamaChatModel : IChatModel
         // --------------------------------------------
         // 3. Give MCP tools to the LLM
         // --------------------------------------------
-
+        //طبق مستندات فعلی SDK، McpClientTool از AIFunction ارث می‌برد و می‌توان آن را مستقیماً داخل ChatOptions.Tools به IChatClient داد.
         var options =
             new ChatOptions
             {

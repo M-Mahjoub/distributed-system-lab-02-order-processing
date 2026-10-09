@@ -6,6 +6,7 @@ namespace ShoppingAgent.Application.Abstractions
     {
         Task<string> GenerateAsync(
             IEnumerable<ChatMessageDto> messages,
+             //IReadOnlyList<IAgentTool> tools,
             CancellationToken cancellationToken = default);
     }
 }
